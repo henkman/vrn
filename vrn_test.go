@@ -52,25 +52,35 @@ func TestFindTrips(t *testing.T) {
 		t.Fail()
 		return
 	}
-	stopsA, err := s.FindStop("Bettenbach (Bergstr), Haus Nr. 34")
-	if err != nil {
-		t.Error(err)
-		t.Fail()
-		return
-	}
-	stopsB, err := s.FindStop("Bettenbach (Bergstr), Abzweigung")
-	if err != nil {
-		t.Error(err)
-		t.Fail()
-		return
-	}
-	trips, err := s.FindTrips(stopsA[0], stopsB[0])
+	origin := "de:07314:2066"
+	dest := "de:08222:2417"
+	trips, err := s.FindTrips(origin, dest)
 	if err != nil {
 		t.Error(err)
 		t.Fail()
 		return
 	}
 	for _, trip := range trips {
-		fmt.Printf("%+v", trip)
+		fmt.Printf("%s: \n", trip.Duration)
+		for _, leg := range trip.Legs {
+			var name string
+			if leg.Mode.Name != "" {
+				name = leg.Mode.Name
+			} else {
+				name = leg.Mode.Product
+			}
+			fmt.Printf("\t%s\n", name)
+			for _, point := range leg.Points {
+				var platform string
+				if point.PlatformName != "" {
+					platform = "platform " + point.PlatformName
+				}
+				fmt.Printf("\t\t%s: '%s' %s %s\n",
+					point.Usage,
+					point.Name,
+					platform,
+					point.DateTime.Time)
+			}
+		}
 	}
 }

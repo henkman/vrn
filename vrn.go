@@ -12,26 +12,17 @@ import (
 
 const API = "https://www.vrn.de/mngvrn"
 
+type Gid = string
+
 type Stop struct {
-	Usage     string `json:"usage"`
-	Type      string `json:"type"`
-	Name      string `json:"name"`
-	Stateless string `json:"stateless"`
-	AnyType   string `json:"anyType"`
-	Sort      string `json:"sort"`
-	Quality   string `json:"quality"`
-	Best      string `json:"best"`
-	Object    string `json:"object"`
-	MainLoc   string `json:"mainLoc,omitempty"`
-	Modes     string `json:"modes,omitempty"`
-	Ref       struct {
-		ID      string `json:"id"`
-		Gid     string `json:"gid"`
-		Omc     string `json:"omc"`
-		PlaceID string `json:"placeID"`
-		Place   string `json:"place"`
-		Niveau  string `json:"niveau"`
-		Coords  string `json:"coords"`
+	Name    string `json:"name"`
+	AnyType string `json:"anyType"`
+	Object  string `json:"object"`
+	MainLoc string `json:"mainLoc,omitempty"`
+	Ref     struct {
+		Gid    Gid    `json:"gid"`
+		Place  string `json:"place"`
+		Coords string `json:"coords"`
 	} `json:"ref"`
 }
 
@@ -46,8 +37,6 @@ type Trip struct {
 			Place               string `json: "place"`
 			NameWithPlace       string `json: "nameWithPlace"`
 			Usage               string `json: "usage"`
-			Omc                 string `json: "omc"`
-			PlaceID             string `json: "placeID"`
 			Desc                string `json: "desc"`
 			DateTime            struct {
 				Date   string `json: "date"`
@@ -55,27 +44,14 @@ type Trip struct {
 				RtDate string `json: "rtDate"`
 				RtTime string `json: "rtTime"`
 			} `json: "dateTime"`
-			Stamp struct {
-				Date   string `json: "date"`
-				Time   string `json: "time"`
-				RtDate string `json: "rtDate"`
-				RtTime string `json: "rtTime"`
-			} `json: "stamp"`
 		} `json: "points"`
 		Mode struct {
-			Name            string `json: "name"`
-			Number          string `json: "number"`
-			Symbol          string `json: "symbol"`
-			Product         string `json: "product"`
-			ProductID       string `json: "productId"`
-			Type            string `json: "type"`
-			Code            string `json: "code"`
-			MtSubcode       string `json: "mtSubcode"`
-			Destination     string `json: "destination"`
-			DestID          string `json: "destID"`
-			Desc            string `json: "desc"`
-			TimetablePeriod string `json: "timetablePeriod"`
-			Realtime        string `json: "realtime"`
+			Name        string `json: "name"`
+			Number      string `json: "number"`
+			Symbol      string `json: "symbol"`
+			Product     string `json: "product"`
+			Destination string `json: "destination"`
+			Desc        string `json: "desc"`
 		} `json: "mode"`
 	} `json: "legs"`
 }
@@ -148,7 +124,7 @@ func (s *Session) FindStop(query string) ([]Stop, error) {
 	return stops, nil
 }
 
-func (s *Session) FindTrips(origin, dest Stop) ([]Trip, error) {
+func (s *Session) FindTrips(origin, dest Gid) ([]Trip, error) {
 	const endpoint = API + "/XML_TRIP_REQUEST2"
 	vals := url.Values{
 		"changeSpeed":          []string{"normal"},
@@ -160,11 +136,11 @@ func (s *Session) FindTrips(origin, dest Stop) ([]Trip, error) {
 		"excludedMeans":        []string{"checkbox"},
 		"itOptionsActive":      []string{"1"},
 		"itPathListActive":     []string{"1"},
-		"itdTime":              []string{"1834"},
+		"itdTime":              []string{time.Now().Format("1504")},
 		"lineRestriction":      []string{"0400"},
 		"locationServerActive": []string{"1"},
-		"name_destination":     []string{dest.Ref.Gid},
-		"name_origin":          []string{origin.Ref.Gid},
+		"name_destination":     []string{dest},
+		"name_origin":          []string{origin},
 		"outputFormat":         []string{"json"},
 		"ptMacro":              []string{"true"},
 		"ptOptionsActive":      []string{"1"},
