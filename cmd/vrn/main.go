@@ -46,6 +46,10 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		if len(trips) == 0 {
+			fmt.Println("no trips found")
+			return
+		}
 		for _, trip := range trips {
 			fmt.Printf("%s: \n", trip.Duration)
 			for _, leg := range trip.Legs {
