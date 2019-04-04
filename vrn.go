@@ -12,7 +12,7 @@ import (
 
 const API = "https://www.vrn.de/mngvrn"
 
-type Gid = string
+type Gid string
 
 type Stop struct {
 	Name    string `json:"name"`
@@ -134,17 +134,20 @@ func (s *Session) FindTrips(origin, dest Gid) ([]Trip, error) {
 		"exclMOT_15":           []string{"1"},
 		"exclMOT_16":           []string{"1"},
 		"excludedMeans":        []string{"checkbox"},
+		"imparedOptionsActive": []string{"1"},
 		"itOptionsActive":      []string{"1"},
 		"itPathListActive":     []string{"1"},
 		"itdTime":              []string{time.Now().Format("1504")},
 		"lineRestriction":      []string{"0400"},
 		"locationServerActive": []string{"1"},
-		"name_destination":     []string{dest},
-		"name_origin":          []string{origin},
+		"name_destination":     []string{string(dest)},
+		"name_origin":          []string{string(origin)},
 		"outputFormat":         []string{"json"},
 		"ptMacro":              []string{"true"},
 		"ptOptionsActive":      []string{"1"},
 		"routeType":            []string{"leasttime"},
+		"showInterchanges":     []string{"1"},
+		"trITMOT":              []string{"100"},
 		"trITMOTvalue":         []string{"15"},
 		"type_destination":     []string{"any"},
 		"type_origin":          []string{"any"},
@@ -157,7 +160,6 @@ func (s *Session) FindTrips(origin, dest Gid) ([]Trip, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	raw, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {

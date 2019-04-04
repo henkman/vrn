@@ -42,7 +42,23 @@ func main() {
 		if err := s.Init(); err != nil {
 			log.Fatal(err)
 		}
-		trips, err := s.FindTrips(opts.Origin, opts.Destination)
+		origin, err := s.FindStop(opts.Origin)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if len(origin) == 0 {
+			fmt.Println("origin not found")
+			return
+		}
+		dest, err := s.FindStop(opts.Destination)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if len(dest) == 0 {
+			fmt.Println("destination not found")
+			return
+		}
+		trips, err := s.FindTrips(origin[0].Ref.Gid, dest[0].Ref.Gid)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -52,8 +52,8 @@ func TestFindTrips(t *testing.T) {
 		t.Fail()
 		return
 	}
-	origin := "de:07314:2066"
-	dest := "de:08222:2417"
+	origin := Gid("de:07314:2066")
+	dest := Gid("de:08222:2417")
 	trips, err := s.FindTrips(origin, dest)
 	if err != nil {
 		t.Error(err)
