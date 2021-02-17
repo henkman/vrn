@@ -3,7 +3,7 @@ package vrn
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -88,7 +88,7 @@ func (s *Session) FindStop(query string) ([]Stop, error) {
 	if err != nil {
 		return nil, err
 	}
-	raw, err := ioutil.ReadAll(res.Body)
+	raw, err := io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
 		return nil, err
@@ -160,7 +160,7 @@ func (s *Session) FindTrips(origin, dest Gid) ([]Trip, error) {
 	if err != nil {
 		return nil, err
 	}
-	raw, err := ioutil.ReadAll(res.Body)
+	raw, err := io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
 		return nil, err
